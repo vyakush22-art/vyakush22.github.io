@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arousal Boss Battle Engine</title>
+    <title>JOI-Style Edging Battle Engine Pro</title>
     <style>
         :root {
             --bg-color: #121214;
@@ -94,67 +94,49 @@
 <style>
         .phallo-container {
             position: relative;
-            width: 140px;
-            height: 280px;
-            margin: 15px auto;
+            width: 180px;
+            height: 320px;
+            margin: 20px auto;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            align-items: flex-end;
+            transition: transform 0.05s ease-out;
+        }
+
+        .phallo-container.beat-pulse {
+            transform: scale(1.04) translateY(-2px);
         }
 
         .phallo-shape {
             position: absolute;
             width: 100%;
             height: 100%;
+            z-index: 5;
             background: #25252b;
             border: 3px solid #3f3f46;
-            border-radius: 40px 40px 20px 20px;
+            clip-path: url(#phalloSilhouette);
             overflow: hidden;
-            z-index: 1;
         }
 
         .phallo-shape.danger-flash {
-            animation: redAlert 0.6s infinite alternate;
+            animation: redAlert 0.4s infinite alternate;
         }
 
         @keyframes redAlert {
-            0% { border-color: #3f3f46; box-shadow: none; }
-            100% { border-color: #e11d48; box-shadow: inset 0 0 15px rgba(225, 29, 72, 0.6), 0 0 15px rgba(225, 29, 72, 0.4); }
+            0% { border-color: #3f3f46; background: #25252b; }
+            100% { border-color: #e11d48; background: #3b141c; box-shadow: inset 0 0 20px rgba(225, 29, 72, 0.6); }
         }
 
-        .shaft {
+        .phallo-outline-backup {
             position: absolute;
-            bottom: 0;
-            width: 80px;
-            height: 210px;
-            left: 30px;
-            background: inherit;
-            border-left: 3px solid #3f3f46;
-            border-right: 3px solid #3f3f46;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: 4px solid #3f3f46;
+            z-index: 1;
+            pointer-events: none;
+            clip-path: url(#phalloSilhouette);
         }
-
-        .glans {
-            position: absolute;
-            top: 15px;
-            width: 96px;
-            height: 80px;
-            left: 22px;
-            background: inherit;
-            border: 3px solid #3f3f46;
-            border-radius: 50% 50% 40% 40%;
-        }
-
-        .balls-left, .balls-right {
-            position: absolute;
-            bottom: -5px;
-            width: 70px;
-            height: 70px;
-            background: inherit;
-            border: 3px solid #3f3f46;
-            border-radius: 50%;
-        }
-        .balls-left { left: 5px; }
-        .balls-right { right: 5px; }
 
         .fluid-fill {
             position: absolute;
@@ -162,8 +144,8 @@
             width: 100%;
             height: 0%;
             background: linear-gradient(0deg, #e4e4e7 0%, #ffffff 100%);
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.6);
-            z-index: 2;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.8);
+            z-index: 6;
             transition: height 0.25s linear;
         }
 
@@ -188,12 +170,84 @@
             transform: scale(1.15);
         }
 
+               /* New Animated Droplets & Ejaculation EFX Styling */
+        .cumshot-droplet {
+            position: fixed;
+            background: linear-gradient(135deg, #ffffff 0%, #e4e4e7 100%);
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.4), inset -2px -2px 6px rgba(0,0,0,0.05);
+            z-index: 99;
+            pointer-events: none;
+            opacity: 0;
+            transform-origin: center;
+        }
+
+        /* Animation profile shooting droplets upwards out of the container tip */
+        @keyframes squirtExplode {
+            0% {
+                transform: translate(0, 0) scale(0.5);
+                opacity: 0;
+            }
+            15% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 0.9;
+                border-radius: 50% 50% 40% 40%;
+            }
+            100% {
+                /* Simulates drops hitting the window surface and melting down */
+                transform: translate(var(--dx), var(--dy)) scale(var(--sz));
+                opacity: 0;
+                border-radius: 40% 40% 60% 60%;
+                top: 100vh; /* Drops fall down the screen due to gravity */
+            }
+        }
+
+        #burstSplashOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.15); /* Semi-transparent to watch the drops hit */
+            z-index: -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(0px);
+            transition: opacity 0.2s ease, backdrop-filter 0.5s ease;
+        }
+
+        #burstSplashOverlay.active {
+            opacity: 1;
+            z-index: 100;
+            pointer-events: auto;
+            backdrop-filter: blur(2px);
+        }
+
+</style>
+<style>
         .instruction-box {
             background: #121214;
             padding: 15px;
             border-radius: 12px;
             margin: 15px 0;
             border-left: 4px solid var(--accent-color);
+        }
+
+        .bot-dialogue-box {
+            background: #0f0f11;
+            border: 1px dashed rgba(255, 42, 116, 0.4);
+            color: #ff75a0;
+            font-style: italic;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .style-tag {
@@ -267,37 +321,10 @@
             margin-top: 10px;
         }
 
-        #burstSplashOverlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 1);
-            z-index: -1; /* Placed completely behind everything until triggered */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.1s ease;
-        }
-
-        #burstSplashOverlay.active {
-            opacity: 1;
-            z-index: 100; /* Moves right to top layer only when active */
-            pointer-events: auto;
-            animation: burstImpactFade 6s forwards;
-        }
-
-        @keyframes burstImpactFade {
-            0% { background: rgba(255,255,255,1); }
-            5% { background: rgba(255,255,255,1); }
-            20% { background: rgba(240,240,245,0.98); }
-            100% { background: rgba(230,230,235,0.92); }
-        }
-
         .drip-layer {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* Allows click-through interaction bypass */
+            pointer-events: none;
             z-index: 50;
             overflow: hidden;
         }
@@ -317,7 +344,7 @@
             15% { opacity: 1; }
             100% { height: 280px; opacity: 0; }
         }
-    </style>
+</style>
 </head>
 <body>
 
@@ -332,72 +359,61 @@
     <div class="drip-layer" id="dripContainer"></div>
 
     <div class="game-container">
-        <h1>Edging Battle Engine</h1>
+        <h1>JOI Edging Battle</h1>
         
         <div id="setupScreen" class="setup-screen">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div class="input-group">
                     <label for="minBpmInput">Min Speed (BPM):</label>
-                    <input type="number" id="minBpmInput" min="40" max="140" value="60">
+                    <input type="number" id="minBpmInput" min="40" max="130" value="60">
                 </div>
                 <div class="input-group">
                     <label for="maxBpmInput">Max Speed (BPM):</label>
-                    <input type="number" id="maxBpmInput" min="100" max="240" value="140">
+                    <input type="number" id="maxBpmInput" min="120" max="240" value="160">
                 </div>
             </div>
-            
-            <div class="input-group">
-                <label for="waveTypeInput">Fluctuation Manner:</label>
-                <select id="waveTypeInput">
-                    <option value="linear">Linear (Smooth Variations)</option>
-                    <option value="wave">Wave (Sine Wave Cycles)</option>
-                    <option value="sudden">Sudden Jumps (Stark Blocks)</option>
-                    <option value="cluster">Cluster Bursts (Short Intense Spikes)</option>
-                </select>
-            </div>
-            
             <button class="action-btn" id="startBtn">Initialize Phase 1</button>
         </div>
 
         <div id="transitionScreen" class="transition-screen hidden">
             <h2 style="color: var(--accent-color);" id="transitionTitle">Phase 1 Defeated!</h2>
-            <p style="margin: 5px 0 15px 0; color: #a0a0a9;">The bot was managed before bursting. Prepare for a harder round.</p>
-            
+            <p style="margin: 5px 0 15px 0; color: #a0a0a9;" id="transitionSummaryText">The bot was managed before bursting.</p>
             <div class="input-group" style="margin-bottom: 10px;">
                 <label for="pauseLengthInput">Set Custom Rest Pause (Seconds):</label>
                 <input type="number" id="pauseLengthInput" min="5" max="300" value="30">
             </div>
-
             <div id="countdownDisplay" style="font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #fff;" class="hidden">Rest Time Remaining: 30s</div>
-            
             <button class="action-btn" id="nextPhaseBtn">Begin Next Phase Now</button>
         </div>
 
         <div id="gameScreen" class="game-screen hidden">
-            <div class="phallo-container">
-                <div class="balls-left"></div>
-                <div class="balls-right"></div>
-                <div class="shaft"></div>
-                <div class="glans"></div>
-                
+            <svg width="0" height="0" style="position: absolute;">
+                <defs>
+                    <clipPath id="phalloSilhouette" clipPathUnits="objectBoundingBox">
+                        <path d="M 0.5,0.02 C 0.65,0.02 0.78,0.12 0.75,0.24 C 0.73,0.29 0.68,0.32 0.68,0.35 L 0.68,0.78 C 0.82,0.78 0.95,0.85 0.95,0.92 C 0.95,0.98 0.75,0.99 0.5,0.99 C 0.25,0.99 0.05,0.98 0.05,0.92 C 0.05,0.85 0.18,0.78 0.32,0.78 L 0.32,0.35 C 0.32,0.32 0.27,0.29 0.25,0.24 C 0.22,0.12 0.35,0.02 0.5,0.02 Z" />
+                    </clipPath>
+                </defs>
+            </svg>
+
+            <div class="phallo-container" id="phalloWarp">
+                <div class="phallo-outline-backup"></div>
                 <div class="phallo-shape" id="phalloFrame">
                     <div class="fluid-fill" id="fluidFill"></div>
                 </div>
             </div>
 
             <div class="percentage-label">Opponent Pressure: <span id="progressPercent">0</span>%</div>
-
             <div class="metronome" id="metroDot"></div>
+            <div class="bot-dialogue-box" id="botSpeech">"Ready to begin?"</div>
 
             <div class="instruction-box">
                 <div class="style-tag" id="phaseDisplay">Phase 1</div>
                 <div class="metric" id="bpmDisplay">60 BPM</div>
-                <div class="timer" id="timeDisplay">Remaining: 45s</div>
+                <div class="timer" id="timeDisplay">Status: Active Run</div>
             </div>
 
             <div class="control-panel">
                 <div class="status-text" id="statusMessage">Match your strokes directly to the bot's speed...</div>
-                
                 <div class="btn-grid" id="gameplayControls">
                     <button class="action-btn" id="tooCloseBtn">I'm Close!</button>
                     <button class="action-btn" id="iCameBtn" style="background: #2563eb;">I Came</button>
@@ -412,17 +428,36 @@
         let isPlaying = false;
         let isPaused = false;
         let rideTheEdgeActive = false;
+        let botEgoDestroyed = false;
         
         let sessionTime = 0;
-        let phaseDuration = 45; 
         let minBPM = 60;
-        let maxBPM = 140;
+        let maxBPM = 160;
         let currentBPM = 60;
-        let variationManner = "linear";
+
+        let lastSpeedShiftTime = 0;
+        let currentSpeedDuration = 4000; 
 
         let timerInterval = null;
         let metronomeInterval = null;
         let countdownInterval = null;
+
+        const intimidations = [
+            "Can you even handle this speed?",
+            "Look at my pressure bar building up. Giving up already?",
+            "Keep matching my rhythm. Don't break now!",
+            "Is my pacing too fast for you?",
+            "I'm setting the speed, you just follow orders.",
+            "Stroke to the flash. No shortcuts allowed here."
+        ];
+
+        const overloadSpeech = [
+            "Wait... it's getting too high! I'm going to lose!",
+            "My pressure... I'm too close to cumming!",
+            "Ah... no! I'm going to cum!",
+            "I'm trying so hard not to leak... but I'm losing control!",
+            "The expansion is breaking me... look at me tremble!"
+        ];
 
         const setupScreen = document.getElementById('setupScreen');
         const transitionScreen = document.getElementById('transitionScreen');
@@ -430,6 +465,7 @@
         const dripContainer = document.getElementById('dripContainer');
         const burstSplashOverlay = document.getElementById('burstSplashOverlay');
         const phalloFrame = document.getElementById('phalloFrame');
+        const phalloWarp = document.getElementById('phalloWarp');
         
         const startBtn = document.getElementById('startBtn');
         const nextPhaseBtn = document.getElementById('nextPhaseBtn');
@@ -439,10 +475,10 @@
 
         const minBpmInput = document.getElementById('minBpmInput');
         const maxBpmInput = document.getElementById('maxBpmInput');
-        const waveTypeInput = document.getElementById('waveTypeInput');
         const pauseLengthInput = document.getElementById('pauseLengthInput');
         const countdownDisplay = document.getElementById('countdownDisplay');
         const transitionTitle = document.getElementById('transitionTitle');
+        const transitionSummaryText = document.getElementById('transitionSummaryText');
         
         const fluidFill = document.getElementById('fluidFill');
         const progressPercent = document.getElementById('progressPercent');
@@ -451,12 +487,11 @@
         const timeDisplay = document.getElementById('timeDisplay');
         const metroDot = document.getElementById('metroDot');
         const statusMessage = document.getElementById('statusMessage');
+        const botSpeech = document.getElementById('botSpeech');
 
         startBtn.addEventListener('click', () => {
             minBPM = parseInt(minBpmInput.value) || 60;
-            maxBPM = parseInt(maxBpmInput.value) || 140;
-            variationManner = waveTypeInput.value;
-
+            maxBPM = parseInt(maxBpmInput.value) || 160;
             setupScreen.classList.add('hidden');
             launchActiveGamePhase(1);
         });
@@ -481,12 +516,9 @@
 
         tooCloseBtn.addEventListener('click', () => {
             if (isPaused || !isPlaying || rideTheEdgeActive) return;
-            
             triggerDrippingFX();
             tooCloseBtn.disabled = true;
-
-            const roll = Math.random();
-            if (roll <= 0.70) {
+            if (Math.random() <= 0.70) {
                 executeRideTheEdgeChallenge();
             } else {
                 executeBriefCoolDownBreak();
@@ -499,95 +531,81 @@
             sessionTime = 0;
             isPaused = false;
             rideTheEdgeActive = false;
+            botEgoDestroyed = false;
             tooCloseBtn.disabled = false;
             
-            const phaseBpmMultiplier = (currentPhase - 1) * 8;
+            const phaseBpmMultiplier = (currentPhase - 1) * 6;
             currentBPM = minBPM + phaseBpmMultiplier;
-            phaseDuration = 45 + ((currentPhase - 1) * 15);
-
             phaseDisplay.innerText = `Phase ${currentPhase}`;
+            timeDisplay.innerText = `Status: Active Run`;
+            botSpeech.innerText = `"Let's see if you can make it through Phase ${currentPhase}..."`;
             gameScreen.classList.remove('hidden');
             
             updateProgress(0);
-            startTimerClock();
+            startMasterTickerClock();
             rebuildMetronomeLoop();
             isPlaying = true;
         }
 
-        function startTimerClock() {
+        function startMasterTickerClock() {
             clearInterval(timerInterval);
+            lastSpeedShiftTime = Date.now();
+            currentSpeedDuration = Math.floor(Math.random() * 5000) + 3000; 
+
             timerInterval = setInterval(() => {
                 if (isPlaying && !isPaused) {
                     sessionTime++;
-                    timeDisplay.innerText = `Remaining: ${phaseDuration - sessionTime}s`;
-                    
-                    if (!rideTheEdgeActive) {
-                        computeDynamicSpeedFluctuation();
-                    }
-
-                    if (sessionTime >= phaseDuration) {
-                        triggerPhaseWinTransition();
+                    if (!rideTheEdgeActive && !botEgoDestroyed) {
+                        const now = Date.now();
+                        if (now - lastSpeedShiftTime >= currentSpeedDuration) {
+                            executeRandomSpeedShift();
+                        }
                     }
                 }
             }, 1000);
         }
 
+        function executeRandomSpeedShift() {
+            const phaseBpmMultiplier = (currentPhase - 1) * 6;
+            const currentMin = minBPM + phaseBpmMultiplier;
+            const currentMax = maxBPM + phaseBpmMultiplier;
+            
+            if (Math.random() <= 0.25) {
+                currentBPM = Math.floor(Math.random() * 15) + (currentMax - 15);
+                currentSpeedDuration = Math.floor(Math.random() * 6000) + 5000; 
+            } else {
+                currentBPM = Math.floor(Math.random() * (currentMax - currentMin + 1)) + currentMin;
+                currentSpeedDuration = Math.floor(Math.random() * 4000) + 3000; 
+            }
+
+            botSpeech.innerText = `"${intimidations[Math.floor(Math.random() * intimidations.length)]}"`;
+            lastSpeedShiftTime = Date.now();
+            rebuildMetronomeLoop();
+        }
+
         function rebuildMetronomeLoop() {
             clearInterval(metronomeInterval);
             bpmDisplay.innerText = `${Math.round(currentBPM)} BPM`;
-            
             const dynamicInterval = (60 / currentBPM) * 1000;
             metronomeInterval = setInterval(() => {
                 if (isPlaying && !isPaused) triggerBeatPulse();
             }, dynamicInterval);
         }
-        function computeDynamicSpeedFluctuation() {
-            const phaseBpmMultiplier = (currentPhase - 1) * 8;
-            const currentMin = minBPM + phaseBpmMultiplier;
-            const currentMax = maxBPM + phaseBpmMultiplier;
-            const range = currentMax - currentMin;
-            
-            let targetBPM = currentBPM;
-
-            if (variationManner === "linear") {
-                const cycle = sessionTime % 40;
-                if (cycle <= 20) {
-                    targetBPM = currentMin + (range * (cycle / 20));
-                } else {
-                    targetBPM = currentMax - (range * ((cycle - 20) / 20));
-                }
-            } 
-            else if (variationManner === "wave") {
-                const radian = (sessionTime * Math.PI) / 15; 
-                targetBPM = currentMin + (range / 2) + (Math.sin(radian) * (range / 2));
-            } 
-            else if (variationManner === "sudden") {
-                const block = Math.floor(sessionTime / 12) % 2;
-                targetBPM = (block === 0) ? currentMin : currentMax;
-            } 
-            else if (variationManner === "cluster") {
-                const segment = sessionTime % 20;
-                targetBPM = (segment >= 16) ? currentMax : currentMin + (range * 0.10);
-            }
-
-            if (Math.round(targetBPM) !== Math.round(currentBPM)) {
-                currentBPM = targetBPM;
-                rebuildMetronomeLoop();
-            }
-        }
-
         function triggerBeatPulse() {
             metroDot.classList.add('pulse');
             setTimeout(() => { metroDot.classList.remove('pulse'); }, 80);
 
+            phalloWarp.classList.add('beat-pulse');
+            setTimeout(() => { phalloWarp.classList.remove('beat-pulse'); }, 70);
+
             if (!rideTheEdgeActive) {
-                const maxAllowedBPM = maxBPM + (currentPhase * 8);
+                const maxAllowedBPM = maxBPM + (currentPhase * 6);
                 const normalizedSpeedFactor = (currentBPM / maxAllowedBPM);
-                const baseFillIncrease = 0.35 + (normalizedSpeedFactor * 1.1) + (currentPhase * 0.08);
+                const baseFillIncrease = 0.28 + (normalizedSpeedFactor * 0.95) + (currentPhase * 0.05);
                 
                 progress += baseFillIncrease;
                 if (progress >= 100) {
-                    triggerFullExplosionBurst();
+                    executePhaseEjaculationShow();
                 } else {
                     updateProgress(progress);
                 }
@@ -598,14 +616,13 @@
             rideTheEdgeActive = true;
             statusMessage.innerText = "RIDE THE EDGE! Hold back your pressure against high speed!";
             
-            const phaseBpmMultiplier = (currentPhase - 1) * 8;
+            const phaseBpmMultiplier = (currentPhase - 1) * 6;
             currentBPM = (maxBPM + phaseBpmMultiplier) - 5;
             rebuildMetronomeLoop();
 
             setTimeout(() => {
                 if (!isPlaying) return;
                 statusMessage.innerText = "CHALLENGE STEP 2: Recovery low speed phase activated.";
-                
                 currentBPM = (minBPM + phaseBpmMultiplier) - 10;
                 if (currentBPM < 40) currentBPM = 40;
                 
@@ -616,16 +633,16 @@
                 setTimeout(() => {
                     rideTheEdgeActive = false;
                     tooCloseBtn.disabled = false;
-                    statusMessage.innerText = "Challenge managed. Resuming automation formulas.";
+                    lastSpeedShiftTime = Date.now();
+                    currentSpeedDuration = Math.floor(Math.random() * 4000) + 3000;
+                    statusMessage.innerText = "Challenge managed. Resuming random variation loops.";
                 }, 20000);
-
             }, 15000);
         }
 
         function executeBriefCoolDownBreak() {
             rideTheEdgeActive = true;
             statusMessage.innerText = "EMERGENCY COOLDOWN BREAK! Stop completely for 20 seconds.";
-            
             currentBPM = 40; 
             progress = Math.max(0, progress - 30);
             updateProgress(progress);
@@ -634,39 +651,97 @@
             setTimeout(() => {
                 rideTheEdgeActive = false;
                 tooCloseBtn.disabled = false;
+                lastSpeedShiftTime = Date.now();
+                currentSpeedDuration = Math.floor(Math.random() * 4000) + 3000;
                 statusMessage.innerText = "Cooldown finished. Returning to target tracks.";
-                currentBPM = minBPM + ((currentPhase - 1) * 8);
+                currentBPM = minBPM + ((currentPhase - 1) * 6);
                 rebuildMetronomeLoop();
             }, 20000);
         }
 
-        function triggerPhaseWinTransition() {
+                function executePhaseEjaculationShow() {
             isPlaying = false;
             clearInterval(timerInterval);
             clearInterval(metronomeInterval);
             
-            gameScreen.classList.add('hidden');
-            transitionScreen.classList.remove('hidden');
-            transitionTitle.innerText = `Phase ${currentPhase} Defeated!`;
-            phalloFrame.classList.remove('danger-flash');
+            progress = 100;
+            updateProgress(100);
             
-            let restTime = parseInt(pauseLengthInput.value) || 30;
-            countdownDisplay.classList.remove('hidden');
-            countdownDisplay.innerText = `Rest Time Remaining: ${restTime}s`;
+            statusMessage.innerText = "THE BOT IS SQUIRT-BURSTING! OVERFLOW EN ROUTE...";
+            botSpeech.innerText = `"Ahhh! Noooo! I completely ruined! I can't check the leak!"`;
+            
+            burstSplashOverlay.classList.add('active');
+            
+            // Calculate coordinates of the tip of the container dynamically
+            const frameRect = phalloFrame.getBoundingClientRect();
+            const startX = frameRect.left + (frameRect.width / 2);
+            const startY = frameRect.top + (frameRect.height * 0.15); // Tip area position
 
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(() => {
-                restTime--;
-                if (restTime <= 0) {
-                    clearInterval(countdownInterval);
-                    countdownDisplay.classList.add('hidden');
-                    transitionScreen.classList.add('hidden');
-                    launchActiveGamePhase(currentPhase + 1);
-                } else {
-                    countdownDisplay.innerText = `Rest Time Remaining: ${restTime}s`;
-                }
-            }, 1000);
+            // Programmatically generate 35 distinct fluid drop bursts
+            for (let i = 0; i < 35; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'cumshot-droplet';
+                
+                // Set start origin right at the anatomical nozzle tip
+                drop.style.left = `${startX}px`;
+                drop.style.top = `${startY}px`;
+
+                // Calculate highly randomized explosive projectile trajectory paths
+                const angle = (Math.random() * Math.PI * 1.4) - (Math.PI * 1.2); // Fires primarily upwards and outwards
+                const distance = Math.floor(Math.random() * 320) + 120;
+                const destinationX = Math.cos(angle) * distance;
+                const destinationY = Math.sin(angle) * distance - (Math.random() * 150); // Upward lift emphasis
+                const customSize = (Math.random() * 1.8) + 0.6; // Random scale diameter variations
+
+                // Inject CSS variable trajectories into the active element
+                drop.style.setProperty('--dx', `${destinationX}px`);
+                drop.style.setProperty('--dy', `${destinationY}px`);
+                drop.style.setProperty('--sz', customSize);
+                
+                // Direct unique dimensions mapping parameters
+                const baseDiameter = Math.floor(Math.random() * 16) + 12;
+                drop.style.width = `${baseDiameter}px`;
+                drop.style.height = `${baseDiameter}px`;
+
+                // Stagger spawn timing curves for realistic stream pacing bursts
+                drop.style.animation = `squirtExplode ${((Math.random() * 1.5) + 2.0).toFixed(2)}s forwards cubic-bezier(0.1, 0.8, 0.3, 1)`;
+                drop.style.animationDelay = `${(Math.random() * 0.8).toFixed(2)}s`;
+
+                document.body.appendChild(drop);
+
+                // Clean up DOM components dynamically after animation sequences close out
+                setTimeout(() => { drop.remove(); }, 3500);
+            }
+            
+            // Hold the splash interaction layout for 6 seconds before transition screens cover it up
+            setTimeout(() => {
+                burstSplashOverlay.classList.remove('active');
+                gameScreen.classList.add('hidden');
+                transitionScreen.classList.remove('hidden');
+                
+                transitionTitle.innerText = `Phase ${currentPhase} Defeated!`;
+                transitionSummaryText.innerText = `You forced the bot to burst completely. Their ego was crushed as they drowned in overload and completely painted the screen. Collect your thoughts before Phase ${currentPhase + 1}.`;
+                phalloFrame.classList.remove('danger-flash');
+                
+                let restTime = parseInt(pauseLengthInput.value) || 30;
+                countdownDisplay.classList.remove('hidden');
+                countdownDisplay.innerText = `Rest Time Remaining: ${restTime}s`;
+
+                clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    restTime--;
+                    if (restTime <= 0) {
+                        clearInterval(countdownInterval);
+                        countdownDisplay.classList.add('hidden');
+                        transitionScreen.classList.add('hidden');
+                        launchActiveGamePhase(currentPhase + 1);
+                    } else {
+                        countdownDisplay.innerText = `Rest Time Remaining: ${restTime}s`;
+                    }
+                }, 1000);
+            }, 6000);
         }
+
 
         function triggerFullExplosionBurst() {
             isPlaying = false;
@@ -676,6 +751,8 @@
             
             progress = 100;
             updateProgress(100);
+            statusMessage.innerText = "SESSION OVER";
+            botSpeech.innerText = `"Haha! You couldn't handle it and came first!"`;
             burstSplashOverlay.classList.add('active');
         }
 
@@ -694,6 +771,13 @@
             fluidFill.style.height = `${value}%`;
             progressPercent.innerText = Math.floor(value);
             
+            if (value >= 70 && !botEgoDestroyed && !rideTheEdgeActive) {
+                botEgoDestroyed = true;
+                botSpeech.innerText = `"${overloadSpeech[Math.floor(Math.random() * overloadSpeech.length)]}"`;
+            } else if (value < 70 && botEgoDestroyed) {
+                botEgoDestroyed = false;
+            }
+
             if (value >= 85) {
                 phalloFrame.classList.add('danger-flash');
             } else {
